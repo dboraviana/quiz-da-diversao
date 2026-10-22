@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#fff8e9">
+  <title>Quiz | Jogos da Diversão</title>
+  <style>
+    :root {
+      --ink: #25304a; --muted: #68728a; --paper: #fffdf8; --bg: #fff8e9;
+      --blue: #4769e8; --blue-dark: #3150c5; --yellow: #ffd45c;
+      --mint: #c9f2df; --pink: #ffd9e4; --lavender: #e4ddff;
+      --line: #e9e5db; --shadow: 0 14px 34px rgba(53, 57, 92, .10);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh; color: var(--ink);
+      font-family: ui-rounded, "SF Pro Rounded", "Avenir Next", system-ui, -apple-system, sans-serif;
+      background:
+        radial-gradient(circle at 8% 8%, rgba(255,212,92,.28) 0 90px, transparent 92px),
+        radial-gradient(circle at 96% 28%, rgba(201,242,223,.55) 0 115px, transparent 117px),
+        var(--bg);
+    }
+    button { font: inherit; touch-action: manipulation; }
+    .app { width: min(100%, 760px); margin: 0 auto; padding: 22px 18px 36px; }
+    header { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 22px; }
+    .brand { display: flex; align-items: center; gap: 11px; }
+    .logo { width: 48px; height: 48px; display: grid; place-items: center; border-radius: 16px; background: var(--yellow); font-size: 27px; box-shadow: 0 5px 0 #e8b93d; }
+    h1 { font-size: clamp(1.25rem, 4vw, 1.65rem); line-height: 1.05; margin: 0; letter-spacing: -.04em; }
+    .subtitle { color: var(--muted); font-size: .88rem; margin-top: 5px; }
+    .score { background: white; border: 1px solid var(--line); border-radius: 15px; padding: 9px 12px; font-weight: 800; white-space: nowrap; box-shadow: 0 4px 0 rgba(37,48,74,.05); }
+    .score span { color: #d69b00; }
+    .welcome { margin: 0 0 17px; }
+    .welcome h2 { font-size: clamp(1.5rem, 5vw, 2.15rem); margin: 0 0 7px; letter-spacing: -.045em; }
+    .welcome p { color: var(--muted); margin: 0; line-height: 1.5; }
+    .setup { margin: 26px 0 14px; }
+    .setup-card { background: var(--paper); border: 1px solid rgba(233,229,219,.95); border-radius: 28px; padding: clamp(20px, 5vw, 32px); box-shadow: var(--shadow); }
+    .setup-card h3 { margin: 0 0 8px; font-size: 1.15rem; }
+    .setup-card > p { color: var(--muted); line-height: 1.45; margin: 0 0 18px; }
+    .setup-group { min-width: 0; padding: 0; border: 0; }
+    .setup-group + .setup-group { margin-top: 26px; }
+    .setup-group legend { display: block; width: 100%; padding: 0; margin-bottom: 12px; font-weight: 850; }
+    .option-list { display: flex; flex-wrap: wrap; gap: 10px; padding: 0; border: 0; }
+    #questionCountOptions.option-list { display: block; }
+    .option-card { min-width: 112px; display: flex; align-items: center; gap: 9px; padding: 12px 15px; border: 2px solid var(--line); border-radius: 16px; background: white; font-weight: 800; cursor: pointer; }
+    .option-card:has(input:checked) { border-color: #9b86ff; background: #f4f1ff; }
+    .option-card:has(input:disabled) { opacity: .45; cursor: not-allowed; }
+    .option-card input { width: 18px; height: 18px; accent-color: var(--blue); }
+    .topic-list { display: flex; flex-wrap: wrap; gap: 9px; }
+    .topic-option { display: inline-flex; align-items: center; gap: 8px; padding: 10px 13px; border: 1px solid var(--line); border-radius: 999px; background: white; font-weight: 750; }
+    .topic-name { flex: 1; font-weight: 800; }
+    .topic-count { color: var(--muted); font-size: .8rem; white-space: nowrap; }
+    .setup-hint { min-height: 1.4em; margin: 13px 0 0 !important; color: var(--muted); font-size: .9rem; }
+    .setup-hint.error { color: #9a3448; font-weight: 750; }
+    .setup-actions { margin-top: 22px; }
+    .setup-actions .primary { width: 100%; }
+    .toolbar { display: flex; justify-content: flex-end; margin: 14px 0; }
+    .pill { border: 1px solid var(--line); background: rgba(255,255,255,.8); border-radius: 999px; padding: 9px 14px; color: var(--muted); font-weight: 750; cursor: pointer; }
+    .progress-wrap { display: flex; justify-content: space-between; color: var(--muted); font-size: .84rem; font-weight: 750; margin: 0 2px 8px; }
+    .progress { height: 8px; background: #eee9dc; border-radius: 99px; overflow: hidden; margin-bottom: 15px; }
+    .progress > div { height: 100%; width: 0; background: linear-gradient(90deg, #6e8aff, #9b86ff); border-radius: inherit; transition: width .25s ease; }
+    .card { background: var(--paper); border: 1px solid rgba(233,229,219,.95); border-radius: 28px; padding: clamp(20px, 5vw, 32px); box-shadow: var(--shadow); position: relative; overflow: hidden; }
+    .card:before { content: "✦"; position: absolute; right: 22px; top: 16px; color: #e6c75e; font-size: 24px; transform: rotate(12deg); }
+    .card-top { display: flex; align-items: center; gap: 8px; margin-bottom: 19px; }
+    .category { display: inline-flex; align-items: center; gap: 6px; border-radius: 99px; background: var(--mint); padding: 7px 11px; font-size: .8rem; font-weight: 850; }
+    .mode-label { color: var(--muted); font-size: .8rem; font-weight: 700; }
+    .question { font-size: clamp(1.55rem, 5.5vw, 2.25rem); font-weight: 850; letter-spacing: -.04em; line-height: 1.2; margin: 0 0 23px; overflow-wrap: anywhere; }
+    .answers { display: grid; gap: 10px; }
+    .answer { min-height: 58px; display: flex; align-items: center; gap: 12px; text-align: left; padding: 13px 15px; border: 2px solid var(--line); border-radius: 17px; background: white; color: var(--ink); font-weight: 750; cursor: pointer; transition: transform .12s, border-color .12s, background .12s; }
+    .answer:active, .primary:active, .secondary:active { transform: scale(.985); }
+    .letter { flex: 0 0 31px; width: 31px; height: 31px; display: grid; place-items: center; border-radius: 10px; background: #f2f0ff; color: #6653c8; font-weight: 900; }
+    .answer.correct { border-color: #57b889; background: #effbf4; }
+    .answer.wrong { border-color: #e78c9e; background: #fff1f3; }
+    .answer:disabled { cursor: default; }
+    .feedback { margin-top: 15px; padding: 14px 15px; border-radius: 16px; background: #f5f2ff; line-height: 1.45; font-weight: 700; }
+    .feedback.good { background: #e9f9ef; color: #176c43; }
+    .feedback.bad { background: #fff0f2; color: #9a3448; }
+    .actions { display: flex; gap: 10px; margin-top: 20px; }
+    .primary, .secondary { min-height: 54px; border: 0; border-radius: 16px; padding: 13px 18px; font-weight: 850; cursor: pointer; }
+    .primary { flex: 1; background: var(--blue); color: white; box-shadow: 0 5px 0 var(--blue-dark); }
+    .primary:hover { background: #3d5fe0; }
+    .secondary { background: white; color: var(--ink); border: 1px solid var(--line); }
+    .hint { text-align: center; color: var(--muted); font-size: .82rem; margin: 16px 0 0; }
+    .finish { text-align: center; padding: 25px 5px 10px; }
+    .finish .emoji { font-size: 4rem; }
+    .finish h2 { font-size: 2rem; letter-spacing: -.04em; margin: 10px 0; }
+    .finish p { color: var(--muted); line-height: 1.5; }
+    .results { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin: 24px 0; text-align: center; }
+    .result { padding: 16px 10px; border-radius: 17px; background: #f5f2ff; }
+    .result strong { display: block; font-size: 1.8rem; }
+    .result span { color: var(--muted); font-size: .88rem; font-weight: 750; }
+    .result.correct-result { background: #e9f9ef; color: #176c43; }
+    .result.wrong-result { background: #fff0f2; color: #9a3448; }
+    footer { text-align: center; color: #8a8c99; font-size: .78rem; padding-top: 22px; }
+    .hidden { display: none !important; }
+    .back-link { display: inline-block; margin: 0 0 16px 3px; color: var(--blue-dark); font-weight: 800; text-decoration: none; }
+    .back-link:hover { text-decoration: underline; }
+    @media (min-width: 620px) { .answers.two-col { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 430px) { .app { padding: 15px 12px 28px; } header { align-items: flex-start; } .logo { width: 42px; height: 42px; } .score { padding: 8px 10px; font-size: .9rem; } .pill { padding: 8px 11px; font-size: .86rem; } .actions { flex-direction: column; } .secondary { order: 2; } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; } }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <a class="back-link" href="index.html">← Jogos</a>
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true">🧠</div>
+        <div><h1>Quiz</h1><div class="subtitle">Uma pergunta de cada vez!</div></div>
+      </div>
+      <div class="score hidden" id="scoreDisplay" aria-live="polite">⭐ <span id="score">0</span> pontos</div>
+    </header>
+
+    <section id="setup" class="setup">
+      <div class="welcome">
+        <h2>Novo jogo 🎉</h2>
+        <p>Escolha quantas perguntas quer responder. Os temas abaixo podem aparecer durante o jogo.</p>
+      </div>
+      <div class="setup-card">
+        <fieldset class="setup-group option-list" id="questionCountOptions">
+          <legend>Quantidade de perguntas</legend>
+        </fieldset>
+        <fieldset class="setup-group">
+          <legend>Temas que podem cair</legend>
+          <div class="topic-list" id="topicOptions"></div>
+          <p class="setup-hint" id="setupHint" aria-live="polite"></p>
+        </fieldset>
+        <div class="setup-actions">
+          <button class="primary" id="startGame" disabled>Começar jogo →</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="game" class="hidden">
+      <nav class="toolbar" aria-label="Ações do jogo">
+        <button id="newGame" class="pill">← Configurar novo jogo</button>
+      </nav>
+      <div class="progress-wrap"><span id="counter">Pergunta 1 de 20</span><span id="remaining">20 pela frente</span></div>
+      <div class="progress" aria-label="Progresso da rodada"><div id="progressBar"></div></div>
+      <article class="card">
+        <div class="card-top"><span class="category" id="category">🐾 Animais</span><span class="mode-label">Múltipla escolha</span></div>
+        <h2 class="question" id="question">Qual animal é conhecido como o melhor amigo do ser humano?</h2>
+        <div id="choices" class="answers"></div>
+        <div id="feedback" class="feedback hidden" aria-live="polite"></div>
+        <div class="actions">
+          <button class="secondary" id="skip">Pular pergunta</button>
+          <button class="primary hidden" id="next">Próxima pergunta →</button>
+        </div>
+      </article>
+      <p class="hint">💡 Dica: vale pensar com calma. O importante é aprender brincando!</p>
+    </section>
+
+    <section id="finish" class="card finish hidden">
+      <div class="emoji">🏆</div>
+      <h2>Rodada concluída!</h2>
+      <p id="finalText"></p>
+      <div class="results" aria-label="Resultado da rodada">
+        <div class="result correct-result"><strong id="correctCount">0</strong><span>Acertos</span></div>
+        <div class="result wrong-result"><strong id="incorrectCount">0</strong><span>Erros</span></div>
+        <div class="result"><strong id="unansweredCount">0</strong><span>Não respondidas</span></div>
+      </div>
+      <button class="primary" id="playAgain">Novo jogo 🔁</button>
+    </section>
+    <footer>Feito para aprender e se divertir • As perguntas podem ser personalizadas no código.</footer>
+  </main>
+
+  <script src="questions.js"></script>
+  <script>
+    const allCards = window.quizQuestions;
+
+    const $ = id => document.getElementById(id);
+    let deck = [], index = 0, score = 0, incorrect = 0, answered = false;
+    const choiceLetters = ["A", "B", "C", "D"];
+    const questionCounts = [10, 20, 30];
+    const categories = [...new Set(allCards.map(card => card.category))].sort((a, b) => a.localeCompare(b, "pt-BR"));
+
+    function shuffle(items) {
+      const result = [...items];
+      for (let i = result.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [result[i], result[j]] = [result[j], result[i]];
+      }
+      return result;
+    }
+    function renderSetup() {
+      $("questionCountOptions").innerHTML = "<legend>Quantidade de perguntas</legend>";
+      questionCounts.forEach(count => {
+        const label = document.createElement("label");
+        label.className = "option-card";
+        const input = document.createElement("input");
+        input.type = "radio"; input.name = "questionCount"; input.value = count;
+        if (count === 10) input.checked = true;
+        input.addEventListener("change", updateSetup);
+        const text = document.createElement("span"); text.textContent = `${count} perguntas`;
+        label.append(input, text);
+        $("questionCountOptions").appendChild(label);
+      });
+
+      $("topicOptions").innerHTML = "";
+      categories.forEach(category => {
+        const categoryCards = allCards.filter(card => card.category === category);
+        const topic = document.createElement("span");
+        topic.className = "topic-option";
+        const name = document.createElement("span");
+        name.className = "topic-name";
+        name.textContent = `${categoryCards[0].emoji} ${category}`;
+        const count = document.createElement("span");
+        count.className = "topic-count";
+        count.textContent = `${categoryCards.length} perguntas`;
+        topic.append(name, count);
+        $("topicOptions").appendChild(topic);
+      });
+      updateSetup();
+    }
+    function updateSetup() {
+      const countInputs = [...document.querySelectorAll('input[name="questionCount"]')];
+      const selectedCount = Number(document.querySelector('input[name="questionCount"]:checked')?.value || 10);
+      document.querySelectorAll('input[name="questionCount"]').forEach(input => {
+        const option = input.closest("label");
+        input.disabled = allCards.length < Number(input.value);
+        option.title = input.disabled ? `São necessárias pelo menos ${input.value} perguntas cadastradas.` : "";
+      });
+      const countAvailable = allCards.length >= selectedCount;
+      $("startGame").disabled = !countAvailable;
+      $("setupHint").classList.toggle("error", !countAvailable);
+      $("setupHint").textContent = countAvailable
+        ? `${allCards.length} perguntas disponíveis. O sorteio inclui todos os temas listados.`
+        : `Ainda não há ${selectedCount} perguntas cadastradas para iniciar esse jogo.`;
+    }
+    function startRound() {
+      const requestedCount = Number(document.querySelector('input[name="questionCount"]:checked')?.value);
+      if (!questionCounts.includes(requestedCount) || allCards.length < requestedCount) {
+        updateSetup();
+        $("setupHint").classList.add("error");
+        return;
+      }
+      deck = shuffle(allCards).slice(0, requestedCount);
+      index = 0; score = 0; incorrect = 0; answered = false;
+      $("score").textContent = score;
+      $("setup").classList.add("hidden"); $("game").classList.remove("hidden"); $("finish").classList.add("hidden");
+      $("scoreDisplay").classList.remove("hidden");
+      renderCard();
+    }
+    function renderCard() {
+      if (index >= deck.length) return finishRound();
+      const card = deck[index];
+      answered = false;
+      $("counter").textContent = `Pergunta ${index + 1} de ${deck.length}`;
+      const remaining = deck.length - index;
+      $("remaining").textContent = `${remaining} ${remaining === 1 ? "pergunta" : "perguntas"} pela frente`;
+      $("progressBar").style.width = `${(index / deck.length) * 100}%`;
+      $("category").textContent = `${card.emoji} ${card.category}`;
+      $("question").textContent = card.question;
+      $("choices").innerHTML = ""; $("feedback").className = "feedback hidden"; $("feedback").textContent = "";
+      $("next").classList.add("hidden");
+      $("skip").classList.remove("hidden");
+      card.choices.forEach((text, i) => {
+        const btn = document.createElement("button");
+        btn.className = "answer";
+        const letter = document.createElement("span"); letter.className = "letter"; letter.textContent = choiceLetters[i];
+        const label = document.createElement("span"); label.textContent = text;
+        btn.append(letter, label); btn.addEventListener("click", () => chooseAnswer(i, btn));
+        $("choices").appendChild(btn);
+      });
+    }
+    function chooseAnswer(choice, button) {
+      if (answered) return;
+      answered = true;
+      const card = deck[index], buttons = [...$("choices").querySelectorAll("button")];
+      buttons.forEach((btn, i) => { btn.disabled = true; if (i === card.answer) btn.classList.add("correct"); });
+      const correct = choice === card.answer;
+      if (correct) { score += 1; button.classList.add("correct"); }
+      else { incorrect += 1; button.classList.add("wrong"); }
+      $("score").textContent = score;
+      showFeedback(correct, card.explanation);
+      showNext();
+    }
+    function showFeedback(correct, explanation) {
+      $("feedback").className = `feedback ${correct ? "good" : "bad"}`;
+      $("feedback").textContent = `${correct ? "🎉 Mandou bem!" : "💪 Tudo bem! Aprender é assim."} ${explanation || ""}`;
+    }
+    function showNext() { $("next").classList.remove("hidden"); $("skip").classList.add("hidden"); }
+    $("next").addEventListener("click", () => { index++; renderCard(); });
+    $("skip").addEventListener("click", () => { index++; renderCard(); });
+    function returnToSetup() {
+      $("game").classList.add("hidden"); $("finish").classList.add("hidden");
+      $("setup").classList.remove("hidden"); $("scoreDisplay").classList.add("hidden");
+      updateSetup();
+    }
+    $("startGame").addEventListener("click", startRound);
+    $("newGame").addEventListener("click", returnToSetup);
+    $("playAgain").addEventListener("click", returnToSetup);
+    function finishRound() {
+      $("game").classList.add("hidden"); $("finish").classList.remove("hidden");
+      $("scoreDisplay").classList.add("hidden");
+      $("progressBar").style.width = "100%";
+      const unanswered = deck.length - score - incorrect;
+      $("correctCount").textContent = score;
+      $("incorrectCount").textContent = incorrect;
+      $("unansweredCount").textContent = unanswered;
+      $("finalText").textContent = `Resultado do jogo com ${deck.length} perguntas: ${score} ${score === 1 ? "acerto" : "acertos"} e ${incorrect} ${incorrect === 1 ? "erro" : "erros"}.${unanswered ? ` ${unanswered} ${unanswered === 1 ? "pergunta não foi respondida." : "perguntas não foram respondidas."}` : " Você respondeu todas as perguntas!"}`;
+    }
+    renderSetup();
+  </script>
+</body>
+</html>

@@ -2,77 +2,58 @@
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#fff8e9">
-  <title>Quiz da Diversão</title>
+  <title>Jogos da Diversão</title>
   <style>
     :root {
-      --ink: #25304a; --muted: #68728a; --paper: #fffdf8; --bg: #fff8e9;
-      --blue: #4769e8; --blue-dark: #3150c5; --yellow: #ffd45c;
-      --mint: #c9f2df; --pink: #ffd9e4; --lavender: #e4ddff;
-      --line: #e9e5db; --shadow: 0 14px 34px rgba(53, 57, 92, .10);
+      --ink: #25304a;
+      --muted: #68728a;
+      --paper: #fffdf8;
+      --bg: #fff8e9;
+      --blue: #4769e8;
+      --blue-dark: #3150c5;
+      --yellow: #ffd45c;
+      --lavender: #e4ddff;
+      --line: #e9e5db;
+      --shadow: 0 14px 34px rgba(53, 57, 92, .10);
     }
     * { box-sizing: border-box; }
     body {
-      margin: 0; min-height: 100vh; color: var(--ink);
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
       font-family: ui-rounded, "SF Pro Rounded", "Avenir Next", system-ui, -apple-system, sans-serif;
       background:
         radial-gradient(circle at 8% 8%, rgba(255,212,92,.28) 0 90px, transparent 92px),
         radial-gradient(circle at 96% 28%, rgba(201,242,223,.55) 0 115px, transparent 117px),
         var(--bg);
     }
-    button { font: inherit; touch-action: manipulation; }
-    .app { width: min(100%, 760px); margin: 0 auto; padding: 22px 18px 36px; }
-    header { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 22px; }
-    .brand { display: flex; align-items: center; gap: 11px; }
-    .logo { width: 48px; height: 48px; display: grid; place-items: center; border-radius: 16px; background: var(--yellow); font-size: 27px; box-shadow: 0 5px 0 #e8b93d; }
-    h1 { font-size: clamp(1.25rem, 4vw, 1.65rem); line-height: 1.05; margin: 0; letter-spacing: -.04em; }
-    .subtitle { color: var(--muted); font-size: .88rem; margin-top: 5px; }
-    .score { background: white; border: 1px solid var(--line); border-radius: 15px; padding: 9px 12px; font-weight: 800; white-space: nowrap; box-shadow: 0 4px 0 rgba(37,48,74,.05); }
-    .score span { color: #d69b00; }
-    .welcome { margin: 0 0 17px; }
-    .welcome h2 { font-size: clamp(1.5rem, 5vw, 2.15rem); margin: 0 0 7px; letter-spacing: -.045em; }
-    .welcome p { color: var(--muted); margin: 0; line-height: 1.5; }
-    .toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 20px 0 14px; }
-    .pill { border: 1px solid var(--line); background: rgba(255,255,255,.8); border-radius: 999px; padding: 9px 14px; color: var(--muted); font-weight: 750; cursor: pointer; }
-    .pill.active { background: var(--lavender); color: var(--ink); border-color: #c7bafc; }
-    .spacer { flex: 1; }
-    .progress-wrap { display: flex; justify-content: space-between; color: var(--muted); font-size: .84rem; font-weight: 750; margin: 0 2px 8px; }
-    .progress { height: 8px; background: #eee9dc; border-radius: 99px; overflow: hidden; margin-bottom: 15px; }
-    .progress > div { height: 100%; width: 0; background: linear-gradient(90deg, #6e8aff, #9b86ff); border-radius: inherit; transition: width .25s ease; }
-    .card { background: var(--paper); border: 1px solid rgba(233,229,219,.95); border-radius: 28px; padding: clamp(20px, 5vw, 32px); box-shadow: var(--shadow); position: relative; overflow: hidden; }
-    .card:before { content: "✦"; position: absolute; right: 22px; top: 16px; color: #e6c75e; font-size: 24px; transform: rotate(12deg); }
-    .card-top { display: flex; align-items: center; gap: 8px; margin-bottom: 19px; }
-    .category { display: inline-flex; align-items: center; gap: 6px; border-radius: 99px; background: var(--mint); padding: 7px 11px; font-size: .8rem; font-weight: 850; }
-    .mode-label { color: var(--muted); font-size: .8rem; font-weight: 700; }
-    .question { font-size: clamp(1.55rem, 5.5vw, 2.25rem); font-weight: 850; letter-spacing: -.04em; line-height: 1.2; margin: 0 0 23px; overflow-wrap: anywhere; }
-    .answers { display: grid; gap: 10px; }
-    .answer { min-height: 58px; display: flex; align-items: center; gap: 12px; text-align: left; padding: 13px 15px; border: 2px solid var(--line); border-radius: 17px; background: white; color: var(--ink); font-weight: 750; cursor: pointer; transition: transform .12s, border-color .12s, background .12s; }
-    .answer:active, .primary:active, .secondary:active { transform: scale(.985); }
-    .letter { flex: 0 0 31px; width: 31px; height: 31px; display: grid; place-items: center; border-radius: 10px; background: #f2f0ff; color: #6653c8; font-weight: 900; }
-    .answer.correct { border-color: #57b889; background: #effbf4; }
-    .answer.wrong { border-color: #e78c9e; background: #fff1f3; }
-    .answer:disabled { cursor: default; }
-    .feedback { margin-top: 15px; padding: 14px 15px; border-radius: 16px; background: #f5f2ff; line-height: 1.45; font-weight: 700; }
-    .feedback.good { background: #e9f9ef; color: #176c43; }
-    .feedback.bad { background: #fff0f2; color: #9a3448; }
-    .reveal-box { background: #fff5cf; border: 1px dashed #e8c34e; border-radius: 18px; padding: 18px; margin: 8px 0 14px; }
-    .reveal-box .small { font-size: .78rem; font-weight: 850; text-transform: uppercase; letter-spacing: .08em; color: #876b14; margin-bottom: 7px; }
-    .reveal-box .answer-text { font-size: 1.3rem; font-weight: 900; line-height: 1.3; }
-    .actions { display: flex; gap: 10px; margin-top: 20px; }
-    .primary, .secondary { min-height: 54px; border: 0; border-radius: 16px; padding: 13px 18px; font-weight: 850; cursor: pointer; }
-    .primary { flex: 1; background: var(--blue); color: white; box-shadow: 0 5px 0 var(--blue-dark); }
-    .primary:hover { background: #3d5fe0; }
-    .secondary { background: white; color: var(--ink); border: 1px solid var(--line); }
-    .hint { text-align: center; color: var(--muted); font-size: .82rem; margin: 16px 0 0; }
-    .finish { text-align: center; padding: 25px 5px 10px; }
-    .finish .emoji { font-size: 4rem; }
-    .finish h2 { font-size: 2rem; letter-spacing: -.04em; margin: 10px 0; }
-    .finish p { color: var(--muted); line-height: 1.5; }
-    footer { text-align: center; color: #8a8c99; font-size: .78rem; padding-top: 22px; }
-    .hidden { display: none !important; }
-    @media (min-width: 620px) { .answers.two-col { grid-template-columns: 1fr 1fr; } }
-    @media (max-width: 430px) { .app { padding: 15px 12px 28px; } header { align-items: flex-start; } .logo { width: 42px; height: 42px; } .score { padding: 8px 10px; font-size: .9rem; } .toolbar { gap: 6px; } .pill { padding: 8px 11px; font-size: .86rem; } .actions { flex-direction: column; } .secondary { order: 2; } }
+    .app { width: min(100%, 900px); margin: 0 auto; padding: 24px 20px 40px; }
+    header { display: flex; justify-content: space-between; align-items: center; gap: 20px; }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .logo { width: 50px; height: 50px; display: grid; place-items: center; border-radius: 16px; background: var(--yellow); font-size: 28px; box-shadow: 0 5px 0 #e8b93d; }
+    h1 { margin: 0; font-size: clamp(1.3rem, 4vw, 1.7rem); letter-spacing: -.04em; }
+    .subtitle { margin-top: 4px; color: var(--muted); font-size: .9rem; }
+    nav { display: flex; gap: 8px; }
+    .menu-link { display: inline-flex; align-items: center; min-height: 44px; padding: 9px 16px; border: 1px solid #c7bafc; border-radius: 999px; background: var(--lavender); color: var(--ink); font-weight: 800; text-decoration: none; }
+    .welcome { margin: 52px 0 24px; }
+    .welcome h2 { margin: 0 0 8px; font-size: clamp(1.8rem, 6vw, 2.5rem); letter-spacing: -.05em; }
+    .welcome p { margin: 0; color: var(--muted); line-height: 1.5; }
+    .games { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 18px; }
+    .game-card { display: flex; flex-direction: column; min-height: 270px; padding: 24px; border: 1px solid rgba(233,229,219,.95); border-radius: 26px; background: var(--paper); box-shadow: var(--shadow); color: inherit; text-decoration: none; transition: transform .15s, box-shadow .15s; }
+    .game-card:hover { transform: translateY(-3px); box-shadow: 0 18px 38px rgba(53,57,92,.15); }
+    .game-icon { display: grid; place-items: center; width: 66px; height: 66px; border-radius: 20px; background: var(--yellow); font-size: 36px; }
+    .game-category { align-self: flex-start; margin-top: 20px; padding: 6px 10px; border-radius: 99px; background: var(--lavender); font-size: .78rem; font-weight: 800; }
+    .game-card h3 { margin: 12px 0 6px; font-size: 1.5rem; letter-spacing: -.03em; }
+    .game-card p { margin: 0; color: var(--muted); line-height: 1.45; }
+    .play-link { margin-top: auto; padding-top: 22px; color: var(--blue-dark); font-weight: 850; }
+    footer { padding-top: 32px; color: #8a8c99; font-size: .8rem; text-align: center; }
+    @media (max-width: 480px) {
+      .app { padding: 18px 14px 32px; }
+      header { align-items: flex-start; flex-direction: column; }
+      .welcome { margin-top: 36px; }
+    }
     @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; } }
   </style>
 </head>
@@ -80,176 +61,40 @@
   <main class="app">
     <header>
       <div class="brand">
-        <div class="logo" aria-hidden="true">🧠</div>
-        <div><h1>Quiz da Diversão</h1><div class="subtitle">Uma pergunta de cada vez!</div></div>
+        <div class="logo" aria-hidden="true">🎮</div>
+        <div>
+          <h1>Jogos da Diversão</h1>
+          <div class="subtitle">Aprender e brincar, tudo no mesmo lugar.</div>
+        </div>
       </div>
-      <div class="score" aria-live="polite">⭐ <span id="score">0</span> pontos</div>
+      <nav aria-label="Menu principal">
+        <a class="menu-link" href="#jogos" aria-current="page">🎮 Jogos</a>
+      </nav>
     </header>
 
-    <section class="welcome">
-      <h2>Pronto para jogar? 🎉</h2>
-      <p>Escolha um tipo de cartão, pense na resposta e descubra se acertou.</p>
+    <section class="welcome" id="jogos">
+      <h2>Escolha um jogo ✨</h2>
+      <p>Selecione um card para começar a jogar.</p>
     </section>
 
-    <nav class="toolbar" aria-label="Tipo de pergunta">
-      <button class="pill active" data-filter="Todas">🎲 Todas</button>
-      <button class="pill" data-filter="Animais">🐾 Animais</button>
-      <button class="pill" data-filter="Ciência">🔬 Ciência</button>
-      <button class="pill" data-filter="Mundo">🌎 Mundo</button>
-      <button class="pill" data-filter="Lógica">💡 Lógica</button>
-      <span class="spacer"></span>
-      <button id="restart" class="pill" title="Recomeçar rodada">↻ Recomeçar</button>
-    </nav>
-
-    <section id="game">
-      <div class="progress-wrap"><span id="counter">Cartão 1 de 10</span><span id="remaining">10 pela frente</span></div>
-      <div class="progress" aria-label="Progresso da rodada"><div id="progressBar"></div></div>
-      <article class="card">
-        <div class="card-top"><span class="category" id="category">🐾 Animais</span><span class="mode-label" id="modeLabel">Múltipla escolha</span></div>
-        <h2 class="question" id="question">Qual animal é conhecido como o melhor amigo do ser humano?</h2>
-        <div id="choices" class="answers"></div>
-        <div id="revealArea" class="hidden">
-          <div class="reveal-box hidden" id="answerReveal"><div class="small">Resposta do cartão</div><div class="answer-text" id="answerText"></div></div>
-          <div id="selfCheck" class="hidden">
-            <p style="margin:0 0 12px;color:var(--muted);line-height:1.45">Pensou na resposta? Toque para conferir e marcar seu resultado.</p>
-            <button class="primary" id="showAnswer" style="width:100%">👀 Revelar resposta</button>
-            <div class="actions hidden" id="selfActions">
-              <button class="secondary" id="markWrong">Ainda não!</button>
-              <button class="primary" id="markRight">Acertei! ⭐</button>
-            </div>
-          </div>
-        </div>
-        <div id="feedback" class="feedback hidden" aria-live="polite"></div>
-        <div class="actions">
-          <button class="secondary" id="skip">Pular cartão</button>
-          <button class="primary hidden" id="next">Próximo cartão →</button>
-        </div>
-      </article>
-      <p class="hint">💡 Dica: vale pensar com calma. O importante é aprender brincando!</p>
+    <section class="games" aria-label="Jogos disponíveis">
+      <a class="game-card" href="quiz.html">
+        <span class="game-icon" aria-hidden="true">🧠</span>
+        <span class="game-category">Perguntas e respostas</span>
+        <h3>Quiz</h3>
+        <p>Teste seus conhecimentos com perguntas de animais, ciência, mundo e lógica.</p>
+        <span class="play-link">Jogar agora →</span>
+      </a>
+      <a class="game-card" href="tabuada.html">
+        <span class="game-icon" aria-hidden="true">✖️</span>
+        <span class="game-category">Matemática</span>
+        <h3>Tabuada</h3>
+        <p>Pratique multiplicação com contas sorteadas e acompanhe seus acertos.</p>
+        <span class="play-link">Jogar agora →</span>
+      </a>
     </section>
 
-    <section id="finish" class="card finish hidden">
-      <div class="emoji">🏆</div>
-      <h2>Rodada concluída!</h2>
-      <p id="finalText"></p>
-      <button class="primary" id="playAgain">Jogar outra vez 🔁</button>
-    </section>
-    <footer>Feito para aprender e se divertir • As perguntas podem ser personalizadas no código.</footer>
+    <footer>Mais jogos poderão aparecer por aqui em breve.</footer>
   </main>
-
-  <script>
-    // Para adicionar cartões, copie um objeto seguindo o mesmo formato.
-    // type: "choice" para múltipla escolha ou "reveal" para revelar a resposta.
-    const allCards = [
-      { category: "Animais", emoji: "🐾", type: "choice", question: "Qual animal é conhecido como o melhor amigo do ser humano?", choices: ["Gato", "Cachorro", "Coelho", "Tartaruga"], answer: 1, explanation: "Os cachorros convivem com seres humanos há milhares de anos!" },
-      { category: "Ciência", emoji: "🔬", type: "reveal", question: "Qual planeta é conhecido como Planeta Vermelho?", answerText: "Marte", explanation: "A cor avermelhada vem de minerais ricos em ferro na superfície." },
-      { category: "Mundo", emoji: "🌎", type: "choice", question: "Quantos continentes existem no modelo de seis continentes usado no Brasil?", choices: ["4", "5", "6", "7"], answer: 2, explanation: "Nesse modelo, contamos América, África, Europa, Ásia, Oceania e Antártida." },
-      { category: "Lógica", emoji: "💡", type: "choice", question: "O que fica mais molhado quanto mais seca?", choices: ["Uma toalha", "Uma pedra", "Uma janela", "Uma meia"], answer: 0, explanation: "A toalha absorve a água enquanto seca outra coisa!" },
-      { category: "Animais", emoji: "🐾", type: "reveal", question: "Qual é o maior animal do planeta?", answerText: "Baleia-azul", explanation: "A baleia-azul pode passar de 25 metros de comprimento." },
-      { category: "Ciência", emoji: "🔬", type: "choice", question: "O que as plantas geralmente precisam para produzir seu alimento?", choices: ["Luz do sol", "Som alto", "Areia colorida", "Vento forte"], answer: 0, explanation: "As plantas usam a luz na fotossíntese." },
-      { category: "Mundo", emoji: "🌎", type: "reveal", question: "Qual é o oceano que banha grande parte do litoral do Brasil?", answerText: "Oceano Atlântico", explanation: "O litoral brasileiro fica às margens do Atlântico." },
-      { category: "Lógica", emoji: "💡", type: "choice", question: "Você tem 3 maçãs e ganha mais 2. Quantas maçãs tem agora?", choices: ["4", "5", "6", "8"], answer: 1, explanation: "3 + 2 = 5 maçãs. Boa conta!" },
-      { category: "Animais", emoji: "🐾", type: "choice", question: "Qual destes animais põe ovos?", choices: ["Cachorro", "Gato", "Galinha", "Cavalo"], answer: 2, explanation: "As galinhas põem ovos, dos quais podem nascer pintinhos." },
-      { category: "Ciência", emoji: "🔬", type: "reveal", question: "Qual estrela ilumina a Terra durante o dia?", answerText: "O Sol", explanation: "O Sol é a estrela mais próxima da Terra." }
-    ];
-
-    const $ = id => document.getElementById(id);
-    let filter = "Todas", deck = [], index = 0, score = 0, answered = false, revealed = false;
-    const choiceLetters = ["A", "B", "C", "D"];
-
-    function shuffle(items) {
-      const result = [...items];
-      for (let i = result.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [result[i], result[j]] = [result[j], result[i]];
-      }
-      return result;
-    }
-    function startRound() {
-      const filtered = allCards.filter(c => filter === "Todas" || c.category === filter);
-      deck = shuffle(filtered);
-      index = 0; score = 0; answered = false; revealed = false;
-      $("score").textContent = score;
-      $("game").classList.remove("hidden"); $("finish").classList.add("hidden");
-      renderCard();
-    }
-    function renderCard() {
-      if (index >= deck.length) return finishRound();
-      const card = deck[index];
-      answered = false; revealed = false;
-      $("counter").textContent = `Cartão ${index + 1} de ${deck.length}`;
-      $("remaining").textContent = `${deck.length - index} ${deck.length - index === 1 ? "pela frente" : "pela frente"}`;
-      $("progressBar").style.width = `${(index / deck.length) * 100}%`;
-      $("category").textContent = `${card.emoji} ${card.category}`;
-      $("question").textContent = card.question;
-      $("modeLabel").textContent = card.type === "choice" ? "Múltipla escolha" : "Revele a resposta";
-      $("choices").innerHTML = ""; $("feedback").className = "feedback hidden"; $("feedback").textContent = "";
-      $("answerReveal").classList.add("hidden"); $("selfActions").classList.add("hidden");
-      $("showAnswer").classList.remove("hidden"); $("selfCheck").classList.add("hidden");
-      $("choices").classList.toggle("hidden", card.type !== "choice");
-      $("revealArea").classList.toggle("hidden", card.type !== "reveal");
-      $("next").classList.add("hidden");
-      $("skip").classList.remove("hidden");
-      if (card.type === "choice") {
-        card.choices.forEach((text, i) => {
-          const btn = document.createElement("button");
-          btn.className = "answer";
-          const letter = document.createElement("span"); letter.className = "letter"; letter.textContent = choiceLetters[i];
-          const label = document.createElement("span"); label.textContent = text;
-          btn.append(letter, label); btn.addEventListener("click", () => chooseAnswer(i, btn));
-          $("choices").appendChild(btn);
-        });
-      } else {
-        $("selfCheck").classList.remove("hidden");
-        $("answerText").textContent = card.answerText;
-      }
-    }
-    function chooseAnswer(choice, button) {
-      if (answered) return;
-      answered = true;
-      const card = deck[index], buttons = [...$("choices").querySelectorAll("button")];
-      buttons.forEach((btn, i) => { btn.disabled = true; if (i === card.answer) btn.classList.add("correct"); });
-      const correct = choice === card.answer;
-      if (correct) { score += 1; button.classList.add("correct"); }
-      else button.classList.add("wrong");
-      $("score").textContent = score;
-      showFeedback(correct, card.explanation);
-      showNext();
-    }
-    $("showAnswer").addEventListener("click", () => {
-      revealed = true;
-      $("answerReveal").classList.remove("hidden");
-      $("showAnswer").classList.add("hidden");
-      $("selfActions").classList.remove("hidden");
-    });
-    $("markRight").addEventListener("click", () => {
-      if (answered) return; answered = true; score += 1; $("score").textContent = score;
-      showFeedback(true, deck[index].explanation); showNext();
-    });
-    $("markWrong").addEventListener("click", () => {
-      if (answered) return; answered = true;
-      showFeedback(false, deck[index].explanation); showNext();
-    });
-    function showFeedback(correct, explanation) {
-      $("feedback").className = `feedback ${correct ? "good" : "bad"}`;
-      $("feedback").textContent = `${correct ? "🎉 Mandou bem!" : "💪 Tudo bem! Aprender é assim."} ${explanation || ""}`;
-    }
-    function showNext() { $("next").classList.remove("hidden"); $("skip").classList.add("hidden"); }
-    $("next").addEventListener("click", () => { index++; renderCard(); });
-    $("skip").addEventListener("click", () => { index++; renderCard(); });
-    $("restart").addEventListener("click", startRound);
-    $("playAgain").addEventListener("click", startRound);
-    document.querySelectorAll("[data-filter]").forEach(btn => btn.addEventListener("click", () => {
-      filter = btn.dataset.filter;
-      document.querySelectorAll("[data-filter]").forEach(b => b.classList.toggle("active", b === btn));
-      startRound();
-    }));
-    function finishRound() {
-      $("game").classList.add("hidden"); $("finish").classList.remove("hidden");
-      $("progressBar").style.width = "100%";
-      $("finalText").textContent = `Você fez ${score} ${score === 1 ? "ponto" : "pontos"} em ${deck.length} cartões. ${score === deck.length ? "Acertou tudo! Que memória incrível!" : "Cada rodada é uma chance de descobrir algo novo. Vamos de novo?"}`;
-    }
-    startRound();
-  </script>
 </body>
 </html>

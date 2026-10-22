@@ -1,0 +1,483 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#fff8e9">
+  <title>Tabuada | Jogos da Diversão</title>
+  <style>
+    :root {
+      --ink: #25304a; --muted: #68728a; --paper: #fffdf8; --bg: #fff8e9;
+      --blue: #4769e8; --blue-dark: #3150c5; --yellow: #ffd45c;
+      --mint: #c9f2df; --line: #e9e5db; --shadow: 0 14px 34px rgba(53,57,92,.10);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh; color: var(--ink);
+      font-family: ui-rounded, "SF Pro Rounded", "Avenir Next", system-ui, -apple-system, sans-serif;
+      background:
+        radial-gradient(circle at 8% 8%, rgba(255,212,92,.28) 0 90px, transparent 92px),
+        radial-gradient(circle at 96% 28%, rgba(201,242,223,.55) 0 115px, transparent 117px),
+        var(--bg);
+    }
+    button, input { font: inherit; }
+    button { touch-action: manipulation; }
+    .app { width: min(100%, 760px); margin: 0 auto; padding: 22px 18px 36px; }
+    .back-link { display: inline-block; margin: 0 0 16px 3px; color: var(--blue-dark); font-weight: 800; text-decoration: none; }
+    .back-link:hover { text-decoration: underline; }
+    header { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 22px; }
+    .brand { display: flex; align-items: center; gap: 11px; }
+    .logo { width: 48px; height: 48px; display: grid; place-items: center; border-radius: 16px; background: var(--yellow); font-size: 27px; box-shadow: 0 5px 0 #e8b93d; }
+    h1 { margin: 0; font-size: clamp(1.25rem, 4vw, 1.65rem); letter-spacing: -.04em; }
+    .subtitle { margin-top: 5px; color: var(--muted); font-size: .88rem; }
+    .welcome { margin: 0 0 17px; }
+    .welcome h2 { margin: 0 0 7px; font-size: clamp(1.5rem, 5vw, 2.15rem); letter-spacing: -.045em; }
+    .welcome p { margin: 0; color: var(--muted); line-height: 1.5; }
+    .setup-card, .card { padding: clamp(20px, 5vw, 32px); border: 1px solid rgba(233,229,219,.95); border-radius: 28px; background: var(--paper); box-shadow: var(--shadow); }
+    .setup-group { min-width: 0; padding: 0; border: 0; }
+    .setup-group + .setup-group { margin-top: 24px; }
+    .setup-group legend { display: block; width: 100%; margin-bottom: 12px; padding: 0; font-weight: 850; }
+    .home-options { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: 16px; }
+    .home-option { display: flex; min-height: 190px; flex-direction: column; align-items: flex-start; padding: 22px; border: 1px solid var(--line); border-radius: 22px; background: var(--paper); box-shadow: var(--shadow); color: var(--ink); text-align: left; cursor: pointer; }
+    .home-option:hover { transform: translateY(-2px); }
+    .home-option .option-emoji { font-size: 2.5rem; }
+    .home-option strong { margin: 12px 0 6px; font-size: 1.25rem; }
+    .home-option span:last-child { color: var(--muted); line-height: 1.45; }
+    .choice-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr)); gap: 10px; }
+    .choice-option { display: flex; align-items: center; gap: 10px; padding: 13px 15px; border: 2px solid var(--line); border-radius: 16px; background: white; font-weight: 800; cursor: pointer; }
+    .choice-option:has(input:checked) { border-color: #9b86ff; background: #f4f1ff; }
+    .choice-option input { width: 18px; height: 18px; accent-color: var(--blue); }
+    .choice-description { min-height: 1.4em; margin: 12px 0 0; color: var(--muted); font-size: .9rem; }
+    .reference-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 12px; }
+    .reference-card { padding: 16px; border: 1px solid var(--line); border-radius: 18px; background: white; }
+    .reference-card h3 { margin: 0 0 10px; font-size: 1.1rem; }
+    .reference-card ol { display: grid; grid-template-columns: 1fr 1fr; gap: 5px 12px; margin: 0; padding-left: 23px; color: var(--muted); }
+    .setup-hint { min-height: 1.4em; margin: 13px 0 0; color: var(--muted); font-size: .9rem; }
+    .setup-hint.error { color: #9a3448; font-weight: 750; }
+    .primary, .secondary { min-height: 54px; padding: 13px 18px; border: 0; border-radius: 16px; font-weight: 850; cursor: pointer; }
+    .primary { background: var(--blue); color: white; box-shadow: 0 5px 0 var(--blue-dark); }
+    .primary:hover { background: #3d5fe0; }
+    .primary:disabled { opacity: .55; cursor: not-allowed; }
+    .secondary { border: 1px solid var(--line); background: white; color: var(--ink); }
+    .setup-actions { margin-top: 22px; }
+    .setup-actions .primary { width: 100%; }
+    .score { padding: 9px 12px; border: 1px solid var(--line); border-radius: 15px; background: white; font-weight: 800; white-space: nowrap; box-shadow: 0 4px 0 rgba(37,48,74,.05); }
+    .score span { color: #d69b00; }
+    .toolbar { display: flex; justify-content: flex-end; margin: 14px 0; }
+    .pill { padding: 9px 14px; border: 1px solid var(--line); border-radius: 999px; background: rgba(255,255,255,.8); color: var(--muted); font-weight: 750; cursor: pointer; }
+    .progress-wrap { display: flex; justify-content: space-between; margin: 0 2px 8px; color: var(--muted); font-size: .84rem; font-weight: 750; }
+    .progress { height: 8px; margin-bottom: 15px; overflow: hidden; border-radius: 99px; background: #eee9dc; }
+    .progress > div { width: 0; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #6e8aff, #9b86ff); transition: width .25s ease; }
+    .card { position: relative; overflow: hidden; }
+    .card:before { position: absolute; top: 16px; right: 22px; color: #e6c75e; font-size: 24px; content: "✦"; transform: rotate(12deg); }
+    .problem-label { margin-bottom: 10px; color: var(--muted); font-size: .88rem; font-weight: 750; }
+    .problem { margin: 0 0 24px; font-size: clamp(2.4rem, 12vw, 4rem); font-weight: 900; letter-spacing: -.06em; text-align: center; }
+    .answer-form { display: flex; gap: 10px; }
+    .answer-input { min-width: 0; flex: 1; min-height: 58px; padding: 12px 16px; border: 2px solid var(--line); border-radius: 16px; background: white; color: var(--ink); font-size: 1.3rem; font-weight: 800; text-align: center; }
+    .answer-input:focus { border-color: #9b86ff; outline: 3px solid rgba(155,134,255,.2); }
+    .answer-form .primary { min-width: 140px; }
+    .feedback { margin-top: 15px; padding: 14px 15px; border-radius: 16px; background: #f5f2ff; line-height: 1.45; font-weight: 700; }
+    .feedback.good { background: #e9f9ef; color: #176c43; }
+    .feedback.bad { background: #fff0f2; color: #9a3448; }
+    .explanation { margin-top: 12px; padding: 14px; border: 1px solid #f1d28a; border-radius: 15px; background: #fff8df; color: var(--ink); }
+    .explanation-title { margin: 0 0 8px; font-weight: 900; }
+    .explanation-step { margin: 5px 0 0; font-weight: 650; }
+    .actions { display: flex; gap: 10px; margin-top: 20px; }
+    .actions > * { flex: 1; }
+    .finish { text-align: center; }
+    .finish .emoji { font-size: 4rem; }
+    .finish h2 { margin: 10px 0; font-size: 2rem; letter-spacing: -.04em; }
+    .finish p { color: var(--muted); line-height: 1.5; }
+    .results { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin: 24px 0; text-align: center; }
+    .result { padding: 16px 10px; border-radius: 17px; background: #f5f2ff; }
+    .result strong { display: block; font-size: 1.8rem; }
+    .result span { color: var(--muted); font-size: .88rem; font-weight: 750; }
+    .correct-result { background: #e9f9ef; color: #176c43; }
+    .wrong-result { background: #fff0f2; color: #9a3448; }
+    footer { padding-top: 22px; color: #8a8c99; font-size: .78rem; text-align: center; }
+    .hidden { display: none !important; }
+    @media (max-width: 430px) {
+      .app { padding: 15px 12px 28px; }
+      header { align-items: flex-start; }
+      .logo { width: 42px; height: 42px; }
+      .answer-form, .actions { flex-direction: column; }
+      .answer-form .primary { width: 100%; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; } }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <a class="back-link" href="index.html">← Jogos</a>
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true">✖️</div>
+        <div><h1>Tabuada</h1><div class="subtitle">Pratique matemática brincando!</div></div>
+      </div>
+      <div class="score hidden" id="scoreDisplay" aria-live="polite">⭐ <span id="score">0</span> acertos</div>
+    </header>
+
+    <section id="home">
+      <div class="welcome">
+        <h2>Vamos estudar? ✨</h2>
+        <p>Escolha se quer começar um treino ou consultar as tabuadas montadas.</p>
+      </div>
+      <div class="home-options">
+        <button class="home-option" id="openSetup">
+          <span class="option-emoji" aria-hidden="true">🎮</span>
+          <strong>Jogar</strong>
+          <span>Escolha a operação e o nível para começar um treino de 10 perguntas.</span>
+        </button>
+        <button class="home-option" id="openReference">
+          <span class="option-emoji" aria-hidden="true">📚</span>
+          <strong>Visualizar tabuadas</strong>
+          <span>Consulte as tabuadas de multiplicação do 1 ao 10.</span>
+        </button>
+      </div>
+    </section>
+
+    <section id="setup" class="hidden">
+      <div class="welcome">
+        <h2>Configurar treino ✨</h2>
+        <p>Cada treino tem 10 perguntas. Escolha a operação e o nível.</p>
+      </div>
+      <div class="setup-card">
+        <fieldset class="setup-group">
+          <legend>Tipo de conta</legend>
+          <div class="choice-list" id="operationOptions"></div>
+        </fieldset>
+        <fieldset class="setup-group">
+          <legend>Nível</legend>
+          <div class="choice-list" id="levelOptions"></div>
+          <p class="choice-description" id="levelDescription" aria-live="polite"></p>
+        </fieldset>
+        <div class="setup-actions">
+          <button class="primary" id="startGame">Começar treino de 10 perguntas →</button>
+          <button class="secondary" id="backHomeFromSetup" style="width:100%;margin-top:12px">← Voltar</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="reference" class="hidden">
+      <div class="welcome">
+        <h2>Tabuadas de multiplicação 📚</h2>
+        <p>Consulte os resultados de 1 × 1 até 10 × 10.</p>
+      </div>
+      <div class="reference-grid" id="referenceGrid"></div>
+      <div class="setup-actions"><button class="secondary" id="backHomeFromReference" style="width:100%">← Voltar</button></div>
+    </section>
+
+    <section id="game" class="hidden">
+      <nav class="toolbar" aria-label="Ações do treino">
+        <button class="pill" id="newGame">← Menu inicial</button>
+      </nav>
+      <div class="progress-wrap"><span id="counter"></span><span id="remaining"></span></div>
+      <div class="progress" aria-label="Progresso do treino"><div id="progressBar"></div></div>
+      <article class="card">
+        <div class="problem-label">Quanto é?</div>
+        <h2 class="problem" id="problem"></h2>
+        <form class="answer-form" id="answerForm">
+          <input class="answer-input" id="answerInput" type="number" inputmode="numeric" min="0" step="1" placeholder="Sua resposta" aria-label="Sua resposta" required>
+          <button class="primary" id="checkAnswer" type="submit">Responder</button>
+        </form>
+        <div id="feedback" class="feedback hidden" aria-live="polite"></div>
+        <div id="explanation" class="explanation hidden" aria-live="polite"></div>
+        <div class="actions">
+          <button class="secondary" id="skip">Pular conta</button>
+          <button class="primary hidden" id="next">Próxima conta →</button>
+        </div>
+      </article>
+      <p class="hint">💡 Dica: tente resolver de cabeça antes de responder!</p>
+    </section>
+
+    <section id="finish" class="card finish hidden">
+      <div class="emoji">🏆</div>
+      <h2>Treino concluído!</h2>
+      <p id="finalText"></p>
+      <div class="results" aria-label="Resultado do treino">
+        <div class="result correct-result"><strong id="correctCount">0</strong><span>Acertos</span></div>
+        <div class="result wrong-result"><strong id="incorrectCount">0</strong><span>Erros</span></div>
+        <div class="result"><strong id="unansweredCount">0</strong><span>Não respondidas</span></div>
+      </div>
+      <button class="primary" id="playAgain">Novo treino 🔁</button>
+    </section>
+    <footer>Aprender e praticar, uma conta de cada vez.</footer>
+  </main>
+
+  <script>
+    const $ = id => document.getElementById(id);
+    const operations = [
+      { id: "addition", label: "Adição", symbol: "+", emoji: "➕" },
+      { id: "subtraction", label: "Subtração", symbol: "−", emoji: "➖" },
+      { id: "division", label: "Divisão", symbol: "÷", emoji: "➗" },
+      { id: "multiplication", label: "Multiplicação", symbol: "×", emoji: "✖️" }
+    ];
+    const levels = [
+      { id: "easy", label: "Fácil", description: "Contas simples, com números pequenos." },
+      { id: "medium", label: "Médio", description: "Contas com números e resultados um pouco maiores." },
+      { id: "intermediate", label: "Intermediário", description: "Contas com números maiores e mais etapas." }
+    ];
+    const tables = Array.from({ length: 10 }, (_, index) => index + 1);
+    let selectedOperation = "multiplication", selectedLevel = "easy";
+    let deck = [], index = 0, score = 0, incorrect = 0, answered = false;
+
+    function shuffle(items) {
+      const result = [...items];
+      for (let i = result.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [result[i], result[j]] = [result[j], result[i]];
+      }
+      return result;
+    }
+    function renderChoices(containerId, name, choices, selectedId, onChange) {
+      choices.forEach(choice => {
+        const label = document.createElement("label");
+        label.className = "choice-option";
+        const input = document.createElement("input");
+        input.type = "radio"; input.name = name; input.value = choice.id;
+        input.checked = choice.id === selectedId;
+        input.addEventListener("change", () => onChange(choice.id));
+        const text = document.createElement("span");
+        text.textContent = choice.emoji ? `${choice.emoji} ${choice.label}` : choice.label;
+        label.append(input, text);
+        $(containerId).appendChild(label);
+      });
+    }
+    function renderSetup() {
+      renderChoices("operationOptions", "operation", operations, selectedOperation, value => {
+        selectedOperation = value;
+        updateLevelDescription();
+      });
+      renderChoices("levelOptions", "level", levels, selectedLevel, value => {
+        selectedLevel = value;
+        updateLevelDescription();
+      });
+      updateLevelDescription();
+    }
+    function updateLevelDescription() {
+      const level = levels.find(item => item.id === selectedLevel);
+      const operation = operations.find(item => item.id === selectedOperation);
+      $("levelDescription").textContent = `${level.description} Na ${operation.label.toLowerCase()}, o jogo mantém resultados adequados ao nível.`;
+    }
+    function renderReference() {
+      $("referenceGrid").innerHTML = "";
+      tables.forEach(table => {
+        const card = document.createElement("article");
+        card.className = "reference-card";
+        const heading = document.createElement("h3");
+        heading.textContent = `Tabuada do ${table}`;
+        const list = document.createElement("ol");
+        for (let multiplier = 1; multiplier <= 10; multiplier++) {
+          const item = document.createElement("li");
+          item.textContent = `${table} × ${multiplier} = ${table * multiplier}`;
+          list.appendChild(item);
+        }
+        card.append(heading, list);
+        $("referenceGrid").appendChild(card);
+      });
+    }
+    function randomInt(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+    function generateQuestion(operation, level) {
+      let first, second;
+      if (operation === "addition" || operation === "subtraction") {
+        const ranges = { easy: [0, 10], medium: [10, 99], intermediate: [100, 999] };
+        const [min, max] = ranges[level];
+        first = randomInt(min, max);
+        second = randomInt(min, max);
+        if (operation === "subtraction" && first < second) [first, second] = [second, first];
+      } else if (operation === "multiplication") {
+        const ranges = { easy: [[0, 10], [0, 10]], medium: [[2, 12], [2, 12]], intermediate: [[10, 99], [10, 99]] };
+        const [[firstMin, firstMax], [secondMin, secondMax]] = ranges[level];
+        first = randomInt(firstMin, firstMax);
+        second = randomInt(secondMin, secondMax);
+      } else {
+        const ranges = { easy: [[1, 10], [1, 10]], medium: [[2, 12], [2, 12]], intermediate: [[2, 99], [10, 99]] };
+        const [[divisorMin, divisorMax], [quotientMin, quotientMax]] = ranges[level];
+        second = randomInt(divisorMin, divisorMax);
+        const quotient = randomInt(quotientMin, quotientMax);
+        first = second * quotient;
+      }
+      const answer = operation === "addition" ? first + second
+        : operation === "subtraction" ? first - second
+          : operation === "multiplication" ? first * second
+            : first / second;
+      const left = first;
+      const right = second;
+      const key = operation === "multiplication"
+        ? `${operation}:${Math.min(left, right)}:${Math.max(left, right)}`
+        : `${operation}:${left}:${right}`;
+      return { operation, first: left, second: right, answer, key };
+    }
+    function startRound() {
+      const uniqueQuestions = new Map();
+      let attempts = 0;
+      while (uniqueQuestions.size < 10 && attempts < 1000) {
+        const question = generateQuestion(selectedOperation, selectedLevel);
+        uniqueQuestions.set(question.key, question);
+        attempts++;
+      }
+      if (uniqueQuestions.size < 10) {
+        $("levelDescription").textContent = "Não foi possível criar perguntas diferentes. Escolha outro nível.";
+        return;
+      }
+      deck = shuffle([...uniqueQuestions.values()]);
+      index = 0; score = 0; incorrect = 0; answered = false;
+      $("score").textContent = score;
+      $("home").classList.add("hidden"); $("setup").classList.add("hidden");
+      $("reference").classList.add("hidden"); $("game").classList.remove("hidden");
+      $("finish").classList.add("hidden");
+      $("scoreDisplay").classList.remove("hidden");
+      renderQuestion();
+    }
+    function renderQuestion() {
+      if (index >= deck.length) return finishRound();
+      const question = deck[index];
+      answered = false;
+      $("counter").textContent = `Conta ${index + 1} de ${deck.length}`;
+      const remaining = deck.length - index;
+      $("remaining").textContent = `${remaining} ${remaining === 1 ? "conta" : "contas"} pela frente`;
+      $("progressBar").style.width = `${(index / deck.length) * 100}%`;
+      const operationSymbol = operations.find(item => item.id === question.operation).symbol;
+      $("problem").textContent = `${question.first} ${operationSymbol} ${question.second} = ?`;
+      $("answerInput").value = "";
+      $("answerInput").disabled = false;
+      $("checkAnswer").disabled = false;
+      $("feedback").className = "feedback hidden"; $("feedback").textContent = "";
+      $("explanation").classList.add("hidden"); $("explanation").innerHTML = "";
+      $("next").classList.add("hidden"); $("skip").classList.remove("hidden");
+      $("answerInput").focus();
+    }
+    $("answerForm").addEventListener("submit", event => {
+      event.preventDefault();
+      if (answered || !$("answerInput").reportValidity()) return;
+      answered = true;
+      const question = deck[index];
+      const isCorrect = Number($("answerInput").value) === question.answer;
+      if (isCorrect) score += 1;
+      else incorrect += 1;
+      $("score").textContent = score;
+      $("answerInput").disabled = true;
+      $("checkAnswer").disabled = true;
+      $("feedback").className = `feedback ${isCorrect ? "good" : "bad"}`;
+      $("feedback").textContent = isCorrect
+        ? `🎉 Isso mesmo! O resultado é ${question.answer}.`
+        : `💡 Sua resposta foi ${$("answerInput").value}. Veja como resolver:`;
+      if (!isCorrect) renderExplanation(question);
+      $("next").classList.remove("hidden"); $("skip").classList.add("hidden");
+      $("next").focus();
+    });
+    function renderExplanation(question) {
+      const box = $("explanation");
+      const title = document.createElement("p");
+      title.className = "explanation-title";
+      title.textContent = "Vamos aprender juntos:";
+      box.appendChild(title);
+      const steps = getExplanationSteps(question);
+      steps.forEach((step, index) => {
+        const line = document.createElement("p");
+        line.className = "explanation-step";
+        line.textContent = `${index + 1}. ${step}`;
+        box.appendChild(line);
+      });
+      box.classList.remove("hidden");
+    }
+    function getExplanationSteps(question) {
+      const { operation, first, second, answer } = question;
+      if (operation === "addition") {
+        const placeValues = [100, 10, 1];
+        const parts = value => placeValues.map(place => Math.floor(value / place) % 10 * place);
+        const firstParts = parts(first);
+        const secondParts = parts(second);
+        const sums = firstParts.map((part, index) => part + secondParts[index]).filter(Boolean);
+        return [
+          `Separe os números em centenas, dezenas e unidades: ${first} + ${second}.`,
+          sums.length ? `Some cada parte: ${sums.join(" + ")}.` : "Somando duas quantidades iguais a zero, continuamos com zero.",
+          `Junte os resultados: ${answer}.`
+        ];
+      }
+      if (operation === "subtraction") {
+        if (first === second) return ["Os números são iguais.", "Um número menos ele mesmo é igual a zero."];
+        const steps = [`Comece no ${second} e conte para frente até chegar ao ${first}.`];
+        const jumps = [];
+        let current = second;
+        const place = 10 ** Math.max(0, String(first).length - 1);
+        while (current < first) {
+          const nextBoundary = (Math.floor(current / place) + 1) * place;
+          const next = Math.min(first, nextBoundary);
+          steps.push(`De ${current} até ${next}, avançamos ${next - current}.`);
+          jumps.push(next - current);
+          current = next;
+        }
+        steps.push(`Some os saltos: ${jumps.join(" + ")} = ${answer}.`);
+        return steps;
+      }
+      if (operation === "multiplication") {
+        const place = 10 ** Math.max(0, String(first).length - 1);
+        const parts = [];
+        let remainder = first;
+        while (remainder > 0) {
+          const part = Math.floor(remainder / place) * place;
+          if (part) parts.push(part);
+          remainder %= place;
+        }
+        if (parts.length > 1) {
+          const products = parts.map(part => part * second);
+          return [
+            `Separe ${first} em ${parts.join(" + ")}.`,
+            `Multiplique cada parte por ${second}: ${products.join(" + ")}.`,
+            `Some os resultados: ${products.reduce((sum, product) => sum + product, 0)}.`
+          ];
+        }
+        const repeated = Array.from({ length: first }, () => second).join(" + ");
+        return [
+          `${first} grupos de ${second} podem ser somados assim: ${repeated || "0"}.`,
+          `Somando os grupos, ${first} × ${second} = ${answer}.`
+        ];
+      }
+      return [
+        `Dividir ${first} em ${second} grupos iguais é descobrir quantos ficam em cada grupo.`,
+        `Confira pela operação inversa: ${second} × ${answer} = ${first}.`,
+        `Então, ${first} ÷ ${second} = ${answer}.`
+      ];
+    }
+    function nextQuestion() { index++; renderQuestion(); }
+    $("next").addEventListener("click", nextQuestion);
+    $("skip").addEventListener("click", nextQuestion);
+    function returnToSetup() {
+      $("home").classList.add("hidden"); $("game").classList.add("hidden");
+      $("finish").classList.add("hidden"); $("reference").classList.add("hidden");
+      $("setup").classList.remove("hidden"); $("scoreDisplay").classList.add("hidden");
+    }
+    function showHome() {
+      $("setup").classList.add("hidden"); $("reference").classList.add("hidden");
+      $("game").classList.add("hidden"); $("finish").classList.add("hidden");
+      $("scoreDisplay").classList.add("hidden"); $("home").classList.remove("hidden");
+    }
+    $("openSetup").addEventListener("click", () => {
+      $("home").classList.add("hidden"); $("setup").classList.remove("hidden");
+    });
+    $("openReference").addEventListener("click", () => {
+      $("home").classList.add("hidden"); $("reference").classList.remove("hidden");
+    });
+    $("backHomeFromSetup").addEventListener("click", showHome);
+    $("backHomeFromReference").addEventListener("click", showHome);
+    $("startGame").addEventListener("click", startRound);
+    $("newGame").addEventListener("click", showHome);
+    $("playAgain").addEventListener("click", showHome);
+    function finishRound() {
+      $("game").classList.add("hidden"); $("finish").classList.remove("hidden");
+      $("scoreDisplay").classList.add("hidden");
+      $("progressBar").style.width = "100%";
+      const unanswered = deck.length - score - incorrect;
+      $("correctCount").textContent = score;
+      $("incorrectCount").textContent = incorrect;
+      $("unansweredCount").textContent = unanswered;
+      $("finalText").textContent = `Você concluiu um treino com ${deck.length} contas: ${score} ${score === 1 ? "acerto" : "acertos"} e ${incorrect} ${incorrect === 1 ? "erro" : "erros"}.${unanswered ? ` ${unanswered} ${unanswered === 1 ? "conta não foi respondida." : "contas não foram respondidas."}` : " Você respondeu todas as contas!"}`;
+    }
+    renderSetup();
+    renderReference();
+  </script>
+</body>
+</html>
