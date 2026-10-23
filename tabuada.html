@@ -58,7 +58,7 @@
     .reference-layout { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: 12px; align-items: stretch; margin-top: 14px; }
     .reference-table, .reference-tips { min-width: 0; padding: 16px; border: 1px solid var(--line); border-radius: 12px; background: white; box-shadow: var(--shadow); }
     .reference-table h3, .reference-tips h3 { margin: 0 0 8px; font-size: 1.25rem; font-weight: 800; }
-    .reference-equations { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+    .reference-equations { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(5, auto); grid-auto-flow: column; gap: 6px; margin: 0; padding: 0; list-style: none; }
     .reference-equations li { padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); font-size: 1.05rem; font-weight: 750; font-variant-numeric: tabular-nums; }
     .reference-tips { background: var(--mint); }
     .reference-tips > p { margin: 0 0 8px; color: var(--muted); }
@@ -167,6 +167,9 @@
       .answer-form .primary, .actions > *, .primary, .secondary { width: 100%; }
       .toolbar { justify-content: flex-start; }
       .progress-wrap { align-items: flex-start; font-size: .82rem; }
+    }
+    @media (max-width: 380px) {
+      .reference-equations { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; grid-auto-flow: row; }
     }
     @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; } }
   </style>
