@@ -73,18 +73,50 @@
     .progress { height: 8px; margin-bottom: 15px; overflow: hidden; border-radius: 6px; background: var(--progress-track); }
     .progress > div { width: 0; height: 100%; border-radius: inherit; background: var(--blue); transition: width .25s ease; }
     .card { position: relative; overflow: hidden; }
+    .selection-info { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; }
+    .chip { padding: 5px 10px; border: 1px solid var(--line); border-radius: 6px; background: white; color: var(--muted); font-size: .875rem; font-weight: 700; }
+    .review-layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; }
+    .exercise-card, .teaching { min-width: 0; }
+    .teaching { padding: 20px; border: 1px solid var(--line); border-radius: 12px; background: var(--mint); }
+    .teaching-kicker { margin: 0 0 6px; color: var(--muted); font-size: .875rem; font-weight: 700; }
+    .teaching h2 { margin: 0; font-size: 1.125rem; font-weight: 800; line-height: 1.3; }
+    .steps { margin: 14px 0 0; padding-left: 22px; }
+    .steps li { margin-top: 8px; }
+    .result-line { margin: 16px 0 0; padding: 12px; border-radius: 9px; background: white; font-weight: 700; }
+    .review-layout.is-reviewing { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+    .review-layout.is-reviewing .exercise-card { grid-column: 1; grid-row: 1; }
+    .review-layout.is-reviewing .teaching { grid-column: 2; grid-row: 1; }
+    .review-layout.is-reviewing .actions { grid-column: 2; grid-row: 2; margin-top: 0; }
     .problem-label { margin-bottom: 10px; color: var(--muted); font-size: .9rem; font-weight: 700; }
     .problem { margin: 0 0 24px; font-size: clamp(2.4rem, 12vw, 4rem); font-weight: 800; letter-spacing: -.06em; line-height: 1.15; text-align: center; font-variant-numeric: tabular-nums; }
+    .answer-state { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; padding: 12px; border: 1px solid var(--incorrect); border-radius: 9px; background: var(--incorrect-surface); color: var(--incorrect-ink); }
+    .answer-state > div { display: flex; align-items: center; gap: 8px; }
+    .response-label { font-weight: 700; }
+    .answer-value { font-size: 1.25rem; }
+    .wrong-tag { padding: 4px 8px; border-radius: 6px; background: var(--incorrect); color: white; font-size: .875rem; font-weight: 700; }
+    .correct-answer { margin-top: 12px; padding: 12px; border: 1px solid var(--line); border-radius: 9px; background: var(--mint); }
+    .correct-answer .problem-label { display: block; margin: 0; }
+    .correct-answer strong { display: block; font-size: 1.375rem; }
     .answer-form { display: flex; gap: 10px; }
     .answer-input { min-width: 0; flex: 1; min-height: 58px; padding: 12px 16px; border: 1px solid var(--line); border-radius: 9px; background: white; color: var(--ink); font-size: 1.3rem; font-weight: 800; text-align: center; }
     .answer-input:focus-visible { border-color: var(--blue); outline: 3px solid rgba(8,126,117,.25); outline-offset: 2px; }
     .answer-form .primary { min-width: 140px; }
     .feedback { margin-top: 15px; padding: 14px 15px; border: 1px solid var(--line); border-radius: 9px; background: var(--mint); color: var(--ink); line-height: 1.5; font-weight: 700; }
     .feedback.good { border-color: #8AB9A9; background: var(--mint); color: var(--ink); }
-    .feedback.bad { border-color: var(--incorrect); background: var(--incorrect-surface); color: var(--incorrect-ink); }
-    .explanation { margin-top: 12px; padding: 14px; border: 1px solid var(--line); border-radius: 9px; background: var(--mint); color: var(--ink); }
-    .explanation-title { margin: 0 0 8px; font-weight: 800; }
-    .explanation-step { margin: 5px 0 0; font-weight: 650; }
+    .model { margin-top: 16px; padding: 16px; border: 1px solid var(--line); border-radius: 9px; background: var(--bg); }
+    .model h2 { margin: 0; font-size: 1.125rem; font-weight: 800; line-height: 1.3; }
+    .model-intro { margin: 4px 0 12px; color: var(--muted); font-size: .875rem; }
+    .groups { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+    .group { display: grid; min-height: 55px; align-content: center; justify-items: center; gap: 5px; padding: 6px 4px; border: 1px solid var(--line); border-radius: 6px; background: white; }
+    .group-label { width: 100%; color: var(--muted); font-size: .7rem; line-height: 1.1; text-align: center; }
+    .dots { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; }
+    .dot { width: 11px; height: 11px; flex: 0 0 11px; border-radius: 50%; background: var(--blue); }
+    .dot.removed { background: #E8EFEC; background-image: linear-gradient(135deg, transparent 43%, var(--incorrect) 45% 55%, transparent 57%); }
+    .model-caption { margin: 10px 0 0; color: var(--ink); font-size: .875rem; font-weight: 700; }
+    .place-values { display: grid; gap: 8px; }
+    .place-value { display: flex; flex-wrap: wrap; gap: 5px; align-items: baseline; }
+    .place-value span { color: var(--muted); font-size: .875rem; font-weight: 700; }
+    .place-value strong { font-variant-numeric: tabular-nums; }
     .actions { display: flex; gap: 10px; margin-top: 20px; }
     .actions > * { flex: 1; }
     .finish { background: var(--completion-surface); text-align: center; }
@@ -108,6 +140,13 @@
       .home-option { min-height: 185px; padding: 20px; }
       .choice-list, .reference-grid { grid-template-columns: 1fr; }
       .answer-form, .actions { flex-direction: column; }
+      .review-layout.is-reviewing { grid-template-columns: minmax(0, 1fr); }
+      .review-layout.is-reviewing .exercise-card,
+      .review-layout.is-reviewing .teaching,
+      .review-layout.is-reviewing .actions { grid-column: 1; }
+      .review-layout.is-reviewing .exercise-card { grid-row: 1; }
+      .review-layout.is-reviewing .teaching { grid-row: 2; }
+      .review-layout.is-reviewing .actions { grid-row: 3; }
       .answer-form .primary, .actions > *, .primary, .secondary { width: 100%; }
       .toolbar { justify-content: flex-start; }
       .progress-wrap { align-items: flex-start; font-size: .82rem; }
@@ -182,20 +221,42 @@
       </nav>
       <div class="progress-wrap"><span id="counter"></span><span id="remaining"></span></div>
       <div class="progress" aria-label="Progresso do treino"><div id="progressBar"></div></div>
-      <article class="card">
-        <div class="problem-label">Quanto é?</div>
-        <h2 class="problem" id="problem"></h2>
-        <form class="answer-form" id="answerForm">
-          <input class="answer-input" id="answerInput" type="number" inputmode="numeric" min="0" step="1" placeholder="Sua resposta" aria-label="Sua resposta" required>
-          <button class="primary" id="checkAnswer" type="submit">Responder</button>
-        </form>
-        <div id="feedback" class="feedback hidden" aria-live="polite"></div>
-        <div id="explanation" class="explanation hidden" aria-live="polite"></div>
+      <div class="selection-info" id="selectionInfo" aria-label="Seleções do treino"></div>
+      <div class="review-layout" id="reviewLayout">
+        <article class="card exercise-card">
+          <div class="problem-label">Quanto é?</div>
+          <h2 class="problem" id="problem"></h2>
+          <div class="answer-state hidden" id="answerState" role="status" aria-live="polite">
+            <span class="response-label">Sua resposta</span>
+            <div><strong class="answer-value" id="submittedAnswer"></strong><span class="wrong-tag">Incorreta</span></div>
+          </div>
+          <div class="correct-answer hidden" id="correctAnswer">
+            <span class="problem-label">Resultado correto</span>
+            <strong id="correctEquation"></strong>
+          </div>
+          <form class="answer-form" id="answerForm">
+            <input class="answer-input" id="answerInput" type="number" inputmode="numeric" min="0" step="1" placeholder="Sua resposta" aria-label="Sua resposta" required>
+            <button class="primary" id="checkAnswer" type="submit">Responder</button>
+          </form>
+          <div id="feedback" class="feedback hidden" aria-live="polite"></div>
+          <div class="model hidden" id="answerModel">
+            <h2 id="modelTitle"></h2>
+            <p class="model-intro" id="modelIntro"></p>
+            <div id="modelVisual"></div>
+            <p class="model-caption" id="modelCaption"></p>
+          </div>
+        </article>
+        <aside class="teaching hidden" id="teaching" aria-labelledby="teachingTitle">
+          <p class="teaching-kicker">Essa resposta não está correta. Veja como resolver.</p>
+          <h2 id="teachingTitle"></h2>
+          <ol class="steps" id="explanationSteps"></ol>
+          <p class="result-line" id="resultLine"></p>
+        </aside>
         <div class="actions">
           <button class="secondary" id="skip">Pular conta</button>
           <button class="primary hidden" id="next">Próxima conta →</button>
         </div>
-      </article>
+      </div>
       <p class="hint">💡 Dica: tente resolver de cabeça antes de responder!</p>
     </section>
 
@@ -338,12 +399,25 @@
       $("reference").classList.add("hidden"); $("game").classList.remove("hidden");
       $("finish").classList.add("hidden");
       $("scoreDisplay").classList.remove("hidden");
+      renderSelectionInfo();
       renderQuestion();
+    }
+    function renderSelectionInfo() {
+      const selectedOperationInfo = operations.find(item => item.id === selectedOperation);
+      const selectedLevelInfo = levels.find(item => item.id === selectedLevel);
+      $("selectionInfo").replaceChildren();
+      [`${selectedOperationInfo.emoji} ${selectedOperationInfo.label}`, `Nível ${selectedLevelInfo.label}`].forEach(label => {
+        const chip = document.createElement("span");
+        chip.className = "chip";
+        chip.textContent = label;
+        $("selectionInfo").appendChild(chip);
+      });
     }
     function renderQuestion() {
       if (index >= deck.length) return finishRound();
       const question = deck[index];
       answered = false;
+      $("reviewLayout").classList.remove("is-reviewing");
       $("counter").textContent = `Conta ${index + 1} de ${deck.length}`;
       const remaining = deck.length - index;
       $("remaining").textContent = `${remaining} ${remaining === 1 ? "conta" : "contas"} pela frente`;
@@ -354,7 +428,13 @@
       $("answerInput").disabled = false;
       $("checkAnswer").disabled = false;
       $("feedback").className = "feedback hidden"; $("feedback").textContent = "";
-      $("explanation").classList.add("hidden"); $("explanation").innerHTML = "";
+      $("answerState").classList.add("hidden");
+      $("correctAnswer").classList.add("hidden");
+      $("answerForm").classList.remove("hidden");
+      $("answerModel").classList.add("hidden");
+      $("teaching").classList.add("hidden");
+      $("modelVisual").replaceChildren();
+      $("explanationSteps").replaceChildren();
       $("next").classList.add("hidden"); $("skip").classList.remove("hidden");
       $("answerInput").focus();
     }
@@ -369,28 +449,127 @@
       $("score").textContent = score;
       $("answerInput").disabled = true;
       $("checkAnswer").disabled = true;
-      $("feedback").className = `feedback ${isCorrect ? "good" : "bad"}`;
-      $("feedback").textContent = isCorrect
-        ? `🎉 Isso mesmo! O resultado é ${question.answer}.`
-        : `💡 Sua resposta foi ${$("answerInput").value}. Veja como resolver:`;
-      if (!isCorrect) renderExplanation(question);
-      $("next").classList.remove("hidden"); $("skip").classList.add("hidden");
+      if (isCorrect) {
+        $("feedback").className = "feedback good";
+        $("feedback").textContent = `🎉 Isso mesmo! O resultado é ${question.answer}.`;
+      } else {
+        $("feedback").className = "feedback hidden";
+        $("feedback").textContent = "";
+        renderErrorReview(question, $("answerInput").value);
+      }
+      $("answerForm").classList.toggle("hidden", !isCorrect);
+      $("next").classList.remove("hidden");
+      $("skip").classList.toggle("hidden", isCorrect);
       $("next").focus();
     });
-    function renderExplanation(question) {
-      const box = $("explanation");
-      const title = document.createElement("p");
-      title.className = "explanation-title";
-      title.textContent = "Vamos aprender juntos:";
-      box.appendChild(title);
-      const steps = getExplanationSteps(question);
-      steps.forEach((step, index) => {
-        const line = document.createElement("p");
-        line.className = "explanation-step";
-        line.textContent = `${index + 1}. ${step}`;
-        box.appendChild(line);
+    function renderErrorReview(question, submittedAnswer) {
+      const operation = operations.find(item => item.id === question.operation);
+      $("reviewLayout").classList.add("is-reviewing");
+      $("submittedAnswer").textContent = submittedAnswer;
+      $("answerState").classList.remove("hidden");
+      $("correctEquation").textContent = `${question.first} ${operation.symbol} ${question.second} = ${question.answer}`;
+      $("correctAnswer").classList.remove("hidden");
+      $("teachingTitle").textContent = getExplanationTitle(question);
+      $("resultLine").textContent = `O resultado correto é ${question.answer}.`;
+      getExplanationSteps(question).forEach(step => {
+        const item = document.createElement("li");
+        item.textContent = step;
+        $("explanationSteps").appendChild(item);
       });
-      box.classList.remove("hidden");
+      renderAnswerModel(question);
+      $("teaching").classList.remove("hidden");
+    }
+    function getExplanationTitle(question) {
+      if (question.operation === "multiplication") return `Conte ${question.second} em cada grupo`;
+      if (question.operation === "addition") return "Junte as duas quantidades";
+      if (question.operation === "subtraction") return "Retire uma quantidade da outra";
+      return "Divida em grupos iguais";
+    }
+    function renderAnswerModel(question) {
+      const { operation, first, second, answer } = question;
+      const modelVisual = $("modelVisual");
+      const operationSymbol = operations.find(item => item.id === operation).symbol;
+      let title = "Veja as quantidades";
+      let intro = "Observe como os números se relacionam nesta conta.";
+      let caption = `${first} ${operationSymbol} ${second} = ${answer}`;
+      let groups = null;
+      let description = "";
+
+      if (operation === "multiplication" && first * second <= 40) {
+        title = "Veja os grupos";
+        intro = `${first} ${first === 1 ? "grupo" : "grupos"} com ${second} ${second === 1 ? "ponto" : "pontos"} em cada um:`;
+        groups = Array.from({ length: Math.max(1, first) }, (_, index) => ({
+          label: first === 0 ? "Nenhum grupo" : `Grupo ${index + 1}`,
+          count: first === 0 ? 0 : second
+        }));
+        description = `${first} grupos com ${second} pontos em cada um, totalizando ${answer}.`;
+        caption = `${Array.from({ length: first }, () => second).join(" + ") || "0"} = ${answer}`;
+      } else if (operation === "addition" && answer <= 40) {
+        title = "Junte as quantidades";
+        intro = "Cada grupo mostra uma parte da soma:";
+        groups = [{ label: `Primeiro: ${first}`, count: first }, { label: `Segundo: ${second}`, count: second }];
+        description = `${first} pontos mais ${second} pontos, totalizando ${answer}.`;
+      } else if (operation === "subtraction" && first <= 40) {
+        title = "Veja o que sobrou";
+        intro = "Os pontos riscados são os que foram retirados:";
+        groups = [{ label: `Começamos com ${first}`, count: first, removedCount: second }];
+        description = `${first} pontos no início; ${second} foram retirados; restam ${answer}.`;
+        caption = `${first} − ${second} = ${answer}`;
+      } else if (operation === "division" && first <= 40 && second <= 12) {
+        title = "Distribua em grupos iguais";
+        intro = `${first} pontos divididos em ${second} grupos:`;
+        groups = Array.from({ length: second }, (_, index) => ({ label: `Grupo ${index + 1}`, count: answer }));
+        description = `${first} pontos distribuídos em ${second} grupos iguais, com ${answer} em cada grupo.`;
+      } else {
+        intro = "Separar os números em partes ajuda a resolver contas maiores.";
+        const decompose = value => {
+          const parts = [10000, 1000, 100, 10, 1]
+            .map(place => Math.floor(value / place) % 10 * place)
+            .filter(Boolean);
+          return parts.length ? parts.join(" + ") : "0";
+        };
+        modelVisual.className = "place-values";
+        modelVisual.setAttribute("role", "img");
+        modelVisual.setAttribute("aria-label", `${first} separado em ${decompose(first)}; ${second} separado em ${decompose(second)}.`);
+        [first, second].forEach((value, index) => {
+          const row = document.createElement("div");
+          row.className = "place-value";
+          const label = document.createElement("span");
+          label.textContent = index === 0 ? "Primeiro número:" : "Segundo número:";
+          const parts = document.createElement("strong");
+          parts.textContent = decompose(value);
+          row.append(label, parts);
+          modelVisual.appendChild(row);
+        });
+      }
+
+      $("modelTitle").textContent = title;
+      $("modelIntro").textContent = intro;
+      $("modelCaption").textContent = caption;
+      if (groups) {
+        modelVisual.className = "groups";
+        modelVisual.setAttribute("role", "img");
+        modelVisual.setAttribute("aria-label", description);
+        groups.forEach(group => modelVisual.appendChild(createDotGroup(group)));
+      }
+      $("answerModel").classList.remove("hidden");
+    }
+    function createDotGroup({ label, count, removedCount = 0 }) {
+      const group = document.createElement("div");
+      group.className = "group";
+      group.setAttribute("aria-hidden", "true");
+      const groupLabel = document.createElement("span");
+      groupLabel.className = "group-label";
+      groupLabel.textContent = label;
+      const dots = document.createElement("span");
+      dots.className = "dots";
+      Array.from({ length: count }, (_, index) => {
+        const dot = document.createElement("i");
+        dot.className = `dot${index >= count - removedCount ? " removed" : ""}`;
+        dots.appendChild(dot);
+      });
+      group.append(groupLabel, dots);
+      return group;
     }
     function getExplanationSteps(question) {
       const { operation, first, second, answer } = question;
@@ -426,10 +605,10 @@
         const place = 10 ** Math.max(0, String(first).length - 1);
         const parts = [];
         let remainder = first;
-        while (remainder > 0) {
-          const part = Math.floor(remainder / place) * place;
+        for (let currentPlace = place; currentPlace >= 1; currentPlace /= 10) {
+          const part = Math.floor(remainder / currentPlace) * currentPlace;
           if (part) parts.push(part);
-          remainder %= place;
+          remainder -= part;
         }
         if (parts.length > 1) {
           const products = parts.map(part => part * second);
@@ -439,6 +618,7 @@
             `Some os resultados: ${products.reduce((sum, product) => sum + product, 0)}.`
           ];
         }
+        if (first >= 10) return [`Multiplique ${first} por ${second}.`, `O resultado é ${answer}.`];
         const repeated = Array.from({ length: first }, () => second).join(" + ");
         return [
           `${first} grupos de ${second} podem ser somados assim: ${repeated || "0"}.`,
