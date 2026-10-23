@@ -62,6 +62,11 @@
     .reference-equations li { padding: 9px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); font-size: 1.05rem; font-weight: 750; font-variant-numeric: tabular-nums; }
     .reference-tips { background: var(--mint); }
     .reference-tips > p { margin: 0 0 12px; color: var(--muted); }
+    .reference-example { margin: 16px 0; padding: 14px; border: 1px solid var(--line); border-radius: 9px; background: white; }
+    .reference-example h4 { margin: 0; font-size: 1rem; font-weight: 800; }
+    .reference-example-equation { margin: 4px 0 12px; font-size: 1.1rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+    .reference-example-groups { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+    .reference-example-groups .group { min-width: 0; }
     .reference-tips ul { display: grid; gap: 12px; margin: 0; padding-left: 22px; }
     .reference-tips li { padding-left: 3px; }
     .reference-tips li strong { display: block; margin-bottom: 2px; }
@@ -241,6 +246,11 @@
         <aside class="reference-tips" aria-labelledby="referenceTipsTitle" aria-live="polite">
           <h3 id="referenceTipsTitle">Dicas para aprender</h3>
           <p id="referenceTipsIntro"></p>
+          <div class="reference-example">
+            <h4>Veja um exemplo com bolinhas</h4>
+            <p class="reference-example-equation" id="referenceExampleEquation"></p>
+            <div class="reference-example-groups" id="referenceExampleGroups"></div>
+          </div>
           <ul id="referenceTips"></ul>
         </aside>
       </div>
@@ -426,6 +436,7 @@
       };
       const operationTips = examples[operation.id];
       $("referenceTipsIntro").textContent = operationTips.intro;
+      renderReferenceExample(operation, number);
       $("referenceTips").replaceChildren();
       operationTips.tips.forEach(([title, text]) => {
         const item = document.createElement("li");
@@ -436,6 +447,40 @@
         item.append(heading, explanation);
         $("referenceTips").appendChild(item);
       });
+    }
+    function renderReferenceExample(operation, number) {
+      const groupsContainer = $("referenceExampleGroups");
+      const groups = [];
+      let equation;
+      let visualDescription;
+
+      if (operation.id === "addition") {
+        equation = `${number} + 3 = ${number + 3}`;
+        visualDescription = `${number} pontos mais 3 pontos, totalizando ${number + 3}.`;
+        groups.push({ label: `Primeiro grupo: ${number}`, count: number }, { label: "Mais 3", count: 3 });
+      } else if (operation.id === "subtraction") {
+        equation = `${number + 3} − ${number} = 3`;
+        visualDescription = `${number + 3} pontos, ${number} riscados, restam 3.`;
+        groups.push({ label: `Tire ${number}`, count: number + 3, removedCount: number });
+      } else if (operation.id === "division") {
+        equation = `${number * 3} ÷ ${number} = 3`;
+        visualDescription = `${number * 3} pontos distribuídos em ${number} grupos iguais, com 3 em cada grupo.`;
+        for (let group = 1; group <= number; group++) {
+          groups.push({ label: `Grupo ${group}`, count: 3 });
+        }
+      } else {
+        equation = `${number} × 3 = ${number * 3}`;
+        visualDescription = `3 grupos com ${number} pontos em cada um, totalizando ${number * 3}.`;
+        for (let group = 1; group <= 3; group++) {
+          groups.push({ label: `Grupo ${group}`, count: number });
+        }
+      }
+
+      $("referenceExampleEquation").textContent = equation;
+      groupsContainer.replaceChildren();
+      groupsContainer.setAttribute("role", "img");
+      groupsContainer.setAttribute("aria-label", `${equation}. ${visualDescription}`);
+      groups.forEach(group => groupsContainer.appendChild(createDotGroup(group)));
     }
     function randomInt(min, max) {
       return Math.floor(Math.random() * (max - min + 1)) + min;
