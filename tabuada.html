@@ -52,10 +52,21 @@
     .choice-option:focus-within { outline: 3px solid var(--blue); outline-offset: 2px; }
     .choice-option input { width: 20px; height: 20px; margin: 0; accent-color: var(--blue); }
     .choice-description { min-height: 1.4em; margin: 12px 0 0; color: var(--muted); font-size: .9rem; }
-    .reference-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 12px; }
-    .reference-card { padding: 16px; border: 1px solid var(--line); border-radius: 9px; background: white; }
-    .reference-card h3 { margin: 0 0 10px; font-size: 1.1rem; font-weight: 800; }
-    .reference-card ol { display: grid; grid-template-columns: 1fr 1fr; gap: 5px 12px; margin: 0; padding-left: 23px; color: var(--ink); font-variant-numeric: tabular-nums; }
+    .reference-operations { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 145px), 1fr)); gap: 10px; }
+    .reference-numbers { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+    .reference-numbers .choice-option { justify-content: center; min-height: 48px; padding: 9px; }
+    .reference-layout { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: 16px; align-items: stretch; margin-top: 18px; }
+    .reference-table, .reference-tips { min-width: 0; padding: 20px; border: 1px solid var(--line); border-radius: 12px; background: white; box-shadow: var(--shadow); }
+    .reference-table h3, .reference-tips h3 { margin: 0 0 12px; font-size: 1.25rem; font-weight: 800; }
+    .reference-equations { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+    .reference-equations li { padding: 9px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); font-size: 1.05rem; font-weight: 750; font-variant-numeric: tabular-nums; }
+    .reference-tips { background: var(--mint); }
+    .reference-tips > p { margin: 0 0 12px; color: var(--muted); }
+    .reference-tips ul { display: grid; gap: 12px; margin: 0; padding-left: 22px; }
+    .reference-tips li { padding-left: 3px; }
+    .reference-tips li strong { display: block; margin-bottom: 2px; }
+    .reference-picker { margin-bottom: 16px; }
+    .reference-picker .setup-group + .setup-group { margin-top: 18px; }
     .setup-hint { min-height: 1.4em; margin: 13px 0 0; color: var(--muted); font-size: .9rem; }
     .setup-hint.error { color: var(--incorrect-ink); font-weight: 750; }
     .primary, .secondary { min-height: 54px; padding: 13px 18px; border: 0; border-radius: 9px; font-weight: 800; cursor: pointer; }
@@ -138,7 +149,8 @@
       .logo { width: 44px; height: 44px; flex-basis: 44px; }
       .home-options { grid-template-columns: 1fr; gap: 12px; }
       .home-option { min-height: 185px; padding: 20px; }
-      .choice-list, .reference-grid { grid-template-columns: 1fr; }
+      .choice-list, .reference-operations { grid-template-columns: 1fr; }
+      .reference-layout { grid-template-columns: minmax(0, 1fr); }
       .answer-form, .actions { flex-direction: column; }
       .review-layout.is-reviewing { grid-template-columns: minmax(0, 1fr); }
       .review-layout.is-reviewing .exercise-card,
@@ -208,10 +220,30 @@
 
     <section id="reference" class="hidden">
       <div class="welcome">
-        <h2>Tabuadas de multiplicação 📚</h2>
-        <p>Consulte os resultados de 1 × 1 até 10 × 10.</p>
+        <h2>Vamos explorar as tabuadas? 📚</h2>
+        <p>Escolha uma operação e um número para ver a tabuada e aprender algumas dicas.</p>
       </div>
-      <div class="reference-grid" id="referenceGrid"></div>
+      <div class="setup-card reference-picker">
+        <fieldset class="setup-group">
+          <legend>Qual operação vamos estudar?</legend>
+          <div class="reference-operations" id="referenceOperationOptions"></div>
+        </fieldset>
+        <fieldset class="setup-group">
+          <legend>Tabuada de qual número?</legend>
+          <div class="reference-numbers" id="referenceNumberOptions"></div>
+        </fieldset>
+      </div>
+      <div class="reference-layout">
+        <article class="reference-table" aria-labelledby="referenceTitle">
+          <h3 id="referenceTitle"></h3>
+          <ol class="reference-equations" id="referenceEquations"></ol>
+        </article>
+        <aside class="reference-tips" aria-labelledby="referenceTipsTitle" aria-live="polite">
+          <h3 id="referenceTipsTitle">Dicas para aprender</h3>
+          <p id="referenceTipsIntro"></p>
+          <ul id="referenceTips"></ul>
+        </aside>
+      </div>
       <div class="setup-actions"><button class="secondary" id="backHomeFromReference" style="width:100%">← Voltar</button></div>
     </section>
 
@@ -287,8 +319,8 @@
       { id: "medium", label: "Médio", description: "Contas com números e resultados um pouco maiores." },
       { id: "intermediate", label: "Intermediário", description: "Contas com números maiores e mais etapas." }
     ];
-    const tables = Array.from({ length: 10 }, (_, index) => index + 1);
     let selectedOperation = "multiplication", selectedLevel = "easy";
+    let selectedReferenceOperation = "multiplication", selectedReferenceNumber = 5;
     let deck = [], index = 0, score = 0, incorrect = 0, answered = false;
 
     function shuffle(items) {
@@ -330,20 +362,79 @@
       $("levelDescription").textContent = `${level.description} Na ${operation.label.toLowerCase()}, o jogo mantém resultados adequados ao nível.`;
     }
     function renderReference() {
-      $("referenceGrid").innerHTML = "";
-      tables.forEach(table => {
-        const card = document.createElement("article");
-        card.className = "reference-card";
-        const heading = document.createElement("h3");
-        heading.textContent = `Tabuada do ${table}`;
-        const list = document.createElement("ol");
-        for (let multiplier = 1; multiplier <= 10; multiplier++) {
-          const item = document.createElement("li");
-          item.textContent = `${table} × ${multiplier} = ${table * multiplier}`;
-          list.appendChild(item);
+      renderChoices("referenceOperationOptions", "referenceOperation", operations, selectedReferenceOperation, value => {
+        selectedReferenceOperation = value;
+        updateReference();
+      });
+      renderChoices("referenceNumberOptions", "referenceNumber", Array.from({ length: 10 }, (_, index) => ({
+        id: String(index + 1),
+        label: String(index + 1)
+      })), String(selectedReferenceNumber), value => {
+        selectedReferenceNumber = Number(value);
+        updateReference();
+      });
+      updateReference();
+    }
+    function updateReference() {
+      const operation = operations.find(item => item.id === selectedReferenceOperation);
+      const number = selectedReferenceNumber;
+      const equationList = $("referenceEquations");
+      equationList.replaceChildren();
+      $("referenceTitle").textContent = `${operation.emoji} Tabuada de ${operation.label.toLowerCase()} do ${number}`;
+
+      for (let result = 1; result <= 10; result++) {
+        const item = document.createElement("li");
+        const first = operation.id === "subtraction" ? number + result : operation.id === "division" ? number * result : number;
+        const second = operation.id === "addition" || operation.id === "multiplication" ? result : number;
+        const answer = operation.id === "addition" ? number + result
+          : operation.id === "subtraction" ? result
+            : operation.id === "division" ? result
+              : number * result;
+        item.textContent = `${first} ${operation.symbol} ${second} = ${answer}`;
+        equationList.appendChild(item);
+      }
+
+      const examples = {
+        addition: {
+          intro: `Na adição, juntamos quantidades. Nesta tabuada, começamos no ${number} e contamos para a frente.`,
+          tips: [
+            ["Conte para a frente", `Para calcular ${number} + 3, fale o ${number} e conte mais três números.`],
+            ["Trocar a ordem não muda a soma", `${number} + 2 dá o mesmo resultado que 2 + ${number}.`]
+          ]
+        },
+        subtraction: {
+          intro: `Na subtração, tiramos uma quantidade ou descobrimos quanto falta.`,
+          tips: [
+            ["Conte para encontrar o resultado", `Em ${number + 3} − ${number}, conte quantos passos separam os dois números.`],
+            ["Confira com a adição", `Se ${number + 3} − ${number} = 3, confira: 3 + ${number} = ${number + 3}.`]
+          ]
+        },
+        division: {
+          intro: `Na divisão, repartimos uma quantidade em grupos iguais.`,
+          tips: [
+            ["Pense em grupos iguais", `${number * 3} ÷ ${number} pergunta quantos grupos de ${number} cabem em ${number * 3}.`],
+            ["Confira com a multiplicação", `${number * 3} ÷ ${number} = 3, porque ${number} × 3 = ${number * 3}.`]
+          ]
+        },
+        multiplication: {
+          intro: `Multiplicar é somar o mesmo número várias vezes.`,
+          tips: [
+            ["Conte em saltos", `Para ${number} × 3, conte de ${number} em ${number}: ${number}, ${number * 2}, ${number * 3}.`],
+            ["Use a adição repetida", `${number} × 3 é o mesmo que ${number} + ${number} + ${number}.`]
+          ]
         }
-        card.append(heading, list);
-        $("referenceGrid").appendChild(card);
+      };
+      const operationTips = examples[operation.id];
+      $("referenceTipsIntro").textContent = operationTips.intro;
+      $("referenceTips").replaceChildren();
+      operationTips.tips.forEach(([title, text]) => {
+        const item = document.createElement("li");
+        const heading = document.createElement("strong");
+        heading.textContent = title;
+        const explanation = document.createElement("span");
+        explanation.textContent = text;
+        item.append(heading, explanation);
+        $("referenceTips").appendChild(item);
       });
     }
     function randomInt(min, max) {
